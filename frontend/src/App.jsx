@@ -5,6 +5,9 @@ import Dashboard from "./pages/Dashboard";
 import Questions from "./pages/questions";
 import MockTest from "./pages/MockTest";
 import StartMockTest from "./pages/StartMockTest";
+import PreviousTests from "./pages/PreviousTests";
+import CardTest from "./components/CardTest";
+import Bookmarks from "./pages/Bookmarks";
 
 function App() {
   return (
@@ -14,6 +17,12 @@ function App() {
         <Route path="/questions/:subject" element={<Questions />} />
         <Route path="/mocktest" element={<MockTest />} />
         <Route path="/mocktest/start" element={<StartMockTest />} />
+        <Route path="/previous-tests" element={<PreviousTests />} />
+        <Route path="/subjects" element={<CardTest />} />
+        <Route
+          path="/bookmarks"
+          element={<Bookmarks />}
+        />
       </Routes>
     </BrowserRouter>
   );

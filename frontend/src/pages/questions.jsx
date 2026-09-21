@@ -8,21 +8,23 @@ function Questions() {
   const [questions, setQuestions] = useState([]);
   const [solvedQuestions, setSolvedQuestions] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);
 
-  // Load solved questions
+  // Load solved questions and bookmarks
   useEffect(() => {
-    try {
-      const savedQuestions =
-        localStorage.getItem("solvedQuestions");
+    const savedQuestions =
+      JSON.parse(localStorage.getItem("solvedQuestions")) || [];
 
-      if (savedQuestions) {
-        setSolvedQuestions(JSON.parse(savedQuestions));
-      }
+    setSolvedQuestions(savedQuestions);
 
-      setIsLoaded(true);
-    } catch (error) {
-      console.log(error);
-    }
+    const savedBookmarks =
+      JSON.parse(
+        localStorage.getItem("bookmarkedQuestions")
+      ) || [];
+
+    setBookmarkedQuestions(savedBookmarks);
+
+    setIsLoaded(true);
   }, []);
 
   // Save solved questions
@@ -47,12 +49,12 @@ function Questions() {
       });
   }, [subject]);
 
-  // Unique question key
+  // Create unique question key
   const getQuestionKey = (q) => {
     return `${subject}-${q.id}`;
   };
 
-  // Mark question solved
+  // Mark question as solved
   const markSolved = (q) => {
     const questionKey = getQuestionKey(q);
 
@@ -61,11 +63,47 @@ function Questions() {
         return prev;
       }
 
-      return [...prev, questionKey];
+      const updatedQuestions = [
+        ...prev,
+        questionKey,
+      ];
+
+      // Tell CardTest that progress changed
+      window.dispatchEvent(
+        new Event("progressUpdated")
+      );
+
+      return updatedQuestions;
     });
   };
 
-  // Filter questions
+  // Bookmark / Remove Bookmark
+  const toggleBookmark = (q) => {
+    const questionKey = getQuestionKey(q);
+
+    setBookmarkedQuestions((prev) => {
+      let updatedBookmarks;
+
+      if (prev.includes(questionKey)) {
+        updatedBookmarks = prev.filter(
+          (item) => item !== questionKey
+        );
+      } else {
+        updatedBookmarks = [
+          ...prev,
+          questionKey,
+        ];
+      }
+
+      localStorage.setItem(
+        "bookmarkedQuestions",
+        JSON.stringify(updatedBookmarks)
+      );
+
+      return updatedBookmarks;
+    });
+  };
+
   const easyQuestions = questions.filter(
     (q) => q.difficulty === "easy"
   );
@@ -81,8 +119,7 @@ function Questions() {
   return (
     <div className="p-4 min-h-screen bg-white">
 
-      {/* ================= EASY ================= */}
-
+      {/* EASY */}
       <h3 className="text-2xl text-black font-bold mb-2">
         Easy Questions
       </h3>
@@ -108,7 +145,7 @@ function Questions() {
               Solve Problem
             </a>
 
-            <div className="flex justify-end mt-1">
+            <div className="flex justify-end mt-1 gap-2">
 
               {solvedQuestions.includes(questionKey) ? (
                 <span className="font-bold text-green-400 text-sm">
@@ -123,14 +160,21 @@ function Questions() {
                 </button>
               )}
 
+              <button
+                className="bg-yellow-400 text-black px-2 py-1 rounded text-sm"
+                onClick={() => toggleBookmark(q)}
+              >
+                {bookmarkedQuestions.includes(questionKey)
+                  ? "Bookmarked"
+                  : "Bookmark"}
+              </button>
+
             </div>
           </div>
         );
       })}
 
-
-      {/* ================= MEDIUM ================= */}
-
+      {/* MEDIUM */}
       <h3 className="text-2xl text-black font-bold mb-2 mt-4">
         Medium Questions
       </h3>
@@ -156,7 +200,7 @@ function Questions() {
               Solve Problem
             </a>
 
-            <div className="flex justify-end mt-1">
+            <div className="flex justify-end mt-1 gap-2">
 
               {solvedQuestions.includes(questionKey) ? (
                 <span className="font-bold text-green-400 text-sm">
@@ -171,14 +215,21 @@ function Questions() {
                 </button>
               )}
 
+              <button
+                className="bg-yellow-400 text-black px-2 py-1 rounded text-sm"
+                onClick={() => toggleBookmark(q)}
+              >
+                {bookmarkedQuestions.includes(questionKey)
+                  ? "Bookmarked"
+                  : "Bookmark"}
+              </button>
+
             </div>
           </div>
         );
       })}
 
-
-      {/* ================= HARD ================= */}
-
+      {/* HARD */}
       <h3 className="text-2xl text-black font-bold mb-2 mt-4">
         Hard Questions
       </h3>
@@ -204,7 +255,7 @@ function Questions() {
               Solve Problem
             </a>
 
-            <div className="flex justify-end mt-1">
+            <div className="flex justify-end mt-1 gap-2">
 
               {solvedQuestions.includes(questionKey) ? (
                 <span className="font-bold text-green-400 text-sm">
@@ -218,6 +269,15 @@ function Questions() {
                   Mark Solved
                 </button>
               )}
+
+              <button
+                className="bg-yellow-400 text-black px-2 py-1 rounded text-sm"
+                onClick={() => toggleBookmark(q)}
+              >
+                {bookmarkedQuestions.includes(questionKey)
+                  ? "Bookmarked"
+                  : "Bookmark"}
+              </button>
 
             </div>
           </div>

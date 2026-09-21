@@ -58,16 +58,21 @@ const Sidebar = () => {
             <span>Mock Tests</span>
           </div>
 
-          <div className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer">
-            <FaHistory />
-            <span>Previous Tests</span>
+          <div
+           onClick={() => navigate("/previous-tests")}
+           className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer"
+>
+           <FaHistory />
+           <span>Previous Tests</span>
           </div>
 
-          <div className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer">
+          <div
+            onClick={() => navigate("/bookmarks")}
+            className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer"
+            >
             <FaBookmark />
             <span>Bookmarks</span>
           </div>
-
           <div className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer">
             <FaChartLine />
             <span>YourProgress</span>

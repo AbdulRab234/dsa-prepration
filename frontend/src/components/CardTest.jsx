@@ -35,57 +35,79 @@ function CardTest() {
     {
       name: "Tree",
       apiName: "Tree",
-      icon: "📦",
+      icon: "🌳",
       button: "Start Practice",
     },
     {
       name: "Graph",
       apiName: "Graph",
-      icon: "🌳",
+      icon: "🔵",
       button: "Start Practice",
     },
   ];
 
-  useEffect(() => {
-    const loadQuestions = async () => {
-      const solvedQuestions =
-        JSON.parse(
-          localStorage.getItem("solvedQuestions")
-        ) || [];
+  const loadQuestions = async () => {
+    const solvedQuestions =
+      JSON.parse(
+        localStorage.getItem("solvedQuestions")
+      ) || [];
 
-      const data = {};
+    const data = {};
 
-      for (const subject of subjects) {
-        try {
-          const res = await axios.get(
-            `http://localhost:3000/api/question/${subject.apiName}`
-          );
+    for (const subject of subjects) {
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/question/${subject.apiName}`
+        );
 
-          const questions = res.data;
+        const questions = res.data;
 
-          const solved = questions.filter((q) =>
-            solvedQuestions.includes(q.id)
-          ).length;
+        const solved = questions.filter((q) =>
+          solvedQuestions.includes(
+            `${subject.apiName}-${q.id}`
+          )
+        ).length;
 
-          data[subject.apiName] = {
-            total: questions.length,
-            solved: solved,
-            progress:
-              questions.length > 0
-                ? Math.round(
-                    (solved / questions.length) * 100
-                  )
-                : 0,
-          };
-        } catch (error) {
-          console.log(error);
-        }
+        data[subject.apiName] = {
+          total: questions.length,
+          solved: solved,
+          progress:
+            questions.length > 0
+              ? Math.round(
+                  (solved / questions.length) * 100
+                )
+              : 0,
+        };
+      } catch (error) {
+        console.log(error);
       }
+    }
 
-      setSubjectData(data);
+    setSubjectData(data);
+  };
+
+  // First time load
+  useEffect(() => {
+    loadQuestions();
+  }, []);
+
+  // Listen for solved question update
+  useEffect(() => {
+    const updateProgress = () => {
+      loadQuestions();
     };
 
-    loadQuestions();
+    window.addEventListener(
+      "progressUpdated",
+      updateProgress
+    );
+
+    return () => {
+      window.removeEventListener(
+        "progressUpdated",
+        updateProgress
+      );
+    };
   }, []);
 
   return (
@@ -100,6 +122,7 @@ function CardTest() {
         <div className="flex flex-wrap gap-2">
 
           {subjects.map((subject) => {
+
             const data =
               subjectData[subject.apiName] || {
                 total: 0,
@@ -126,12 +149,14 @@ function CardTest() {
                 </p>
 
                 <div className="w-full bg-gray-300 rounded-full h-2">
+
                   <div
                     className="bg-green-500 h-2 rounded-full"
                     style={{
                       width: `${data.progress}%`,
                     }}
                   ></div>
+
                 </div>
 
                 <p className="text-xs text-gray-500">

@@ -75,34 +75,56 @@ function StartMockTest() {
 
   const question = questions[currentQuestion];
 
+  // Next / Submit
   const handleNext = () => {
-  const isCorrect = selectedAnswer === question.answer;
+    const isCorrect =
+      selectedAnswer === question.answer;
 
-  const newScore = isCorrect ? score + 1 : score;
+    const newScore = isCorrect
+      ? score + 1
+      : score;
 
-  setScore(newScore);
-  setSelectedAnswer("");
+    setScore(newScore);
+    setSelectedAnswer("");
 
-  if (currentQuestion === questions.length - 1) {
+    // Last question
+    if (currentQuestion === questions.length - 1) {
 
-    const result = {
-      score: newScore,
-      total: questions.length,
-      percentage: Math.round(
-        (newScore / questions.length) * 100
-      ),
-    };
+      const result = {
+        score: newScore,
+        total: questions.length,
+        percentage: Math.round(
+          (newScore / questions.length) * 100
+        ),
+      };
 
-    localStorage.setItem(
-      "latestMockTest",
-      JSON.stringify(result)
-    );
+      // Save latest test
+      localStorage.setItem(
+        "latestMockTest",
+        JSON.stringify(result)
+      );
 
-    setTestCompleted(true);
-  } else {
-    setCurrentQuestion(currentQuestion + 1);
-  }
-};
+      // Save test in previous test history
+      const oldTests =
+        JSON.parse(
+          localStorage.getItem("mockTests")
+        ) || [];
+
+      oldTests.push(result);
+
+      localStorage.setItem(
+        "mockTests",
+        JSON.stringify(oldTests)
+      );
+
+      setTestCompleted(true);
+
+    } else {
+      setCurrentQuestion(
+        currentQuestion + 1
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white p-6">
@@ -124,21 +146,23 @@ function StartMockTest() {
 
         <div className="space-y-3">
 
-          {question.options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() =>
-                setSelectedAnswer(option)
-              }
-              className={`w-full text-left p-3 border rounded-lg ${
-                selectedAnswer === option
-                  ? "bg-white text-black"
-                  : "bg-black text-white border-white"
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+          {question.options.map(
+            (option, index) => (
+              <button
+                key={index}
+                onClick={() =>
+                  setSelectedAnswer(option)
+                }
+                className={`w-full text-left p-3 border rounded-lg ${
+                  selectedAnswer === option
+                    ? "bg-white text-black"
+                    : "bg-black text-white border-white"
+                }`}
+              >
+                {option}
+              </button>
+            )
+          )}
 
         </div>
 
