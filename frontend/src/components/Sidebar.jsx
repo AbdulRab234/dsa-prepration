@@ -78,9 +78,12 @@ const Sidebar = () => {
             <span>YourProgress</span>
           </div>
 
-          <div className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer">
-            <FaUser />
-            <span>Profile</span>
+          <div
+              onClick={() => navigate("/profile")}
+              className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer"
+>
+              <FaUser />
+              <span>Profile</span>
           </div>
 
           <div className="flex items-center gap-3 hover:bg-[#1E293B] p-3 rounded-lg cursor-pointer">

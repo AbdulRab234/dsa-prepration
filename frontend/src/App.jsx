@@ -8,6 +8,9 @@ import StartMockTest from "./pages/StartMockTest";
 import PreviousTests from "./pages/PreviousTests";
 import CardTest from "./components/CardTest";
 import Bookmarks from "./pages/Bookmarks";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
+
 
 function App() {
   return (
@@ -19,6 +22,8 @@ function App() {
         <Route path="/mocktest/start" element={<StartMockTest />} />
         <Route path="/previous-tests" element={<PreviousTests />} />
         <Route path="/subjects" element={<CardTest />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/bookmarks"
           element={<Bookmarks />}
